@@ -71,12 +71,15 @@ def read_items(
     query = db.query(WorkItem)
     
     # Branch filtering based on user role
+    # Note: When developers request their own assignments (assignee_id == "me"),
+    # we avoid restricting by branch so they always see tickets assigned to them
     if current_user.role == "requester":
         # Requesters can only see items from their branch
         query = query.filter(WorkItem.branch_id == current_user.branch_id)
     elif current_user.role == "dev":
-        # Developers can see items from their branch
-        query = query.filter(WorkItem.branch_id == current_user.branch_id)
+        # Apply branch filter for devs only if they have a branch AND they are not explicitly fetching their own assignments
+        if assignee_id != "me" and current_user.branch_id is not None:
+            query = query.filter(WorkItem.branch_id == current_user.branch_id)
     # PMs can see all items (no branch filter by default)
     
     # Apply explicit branch filter if provided
