@@ -1,7 +1,10 @@
 import axios from 'axios'
 
+// Use environment variable for production, fallback to '/api' for development
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
+
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   timeout: 10000,
 })
 
@@ -9,12 +12,8 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token')
-    console.log('API Request:', config.url, 'Token:', token ? 'Present' : 'Missing')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
-      console.log('Authorization header set:', config.headers.Authorization)
-    } else {
-      console.warn('No token found in localStorage')
     }
     return config
   },
@@ -27,9 +26,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API Error:', error.response?.status, error.response?.data, error.config?.url)
-    if (error.response?.status === 401) {
-      console.log('401 Unauthorized - redirecting to login')
+    // Don't redirect on 401 for login endpoint - let the login form handle it
+    const isLoginRequest = error.config?.url?.includes('/auth/login')
+    
+    if (error.response?.status === 401 && !isLoginRequest) {
+      // Only redirect to login for other API calls (session expired)
       localStorage.removeItem('token')
       window.location.href = '/login'
     }
