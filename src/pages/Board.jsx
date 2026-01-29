@@ -23,10 +23,11 @@ export default function Board() {
   const [showDone, setShowDone] = useState(false)
   const [filter, setFilter] = useState({
     type: '',
-    assignee: user?.role === 'dev' ? 'me' : '', // Default to "my tickets" for developers
+    assignee: (user?.role === 'dev' || user?.role === 'pm') ? 'me' : '', // Default to "my tickets" for developers and PMs
     priority: '',
     branch: ''
   })
+  const assignableUsers = users.filter(u => u.role === 'dev' || u.role === 'pm')
 
   useEffect(() => {
     fetchItems()
@@ -240,37 +241,35 @@ export default function Board() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div className="flex-1">
-          <h1 className="text-xl font-bold text-gray-900">
-            {user?.role === 'dev' ? '📋 My Tickets' : '📋 Kanban Board'}
-          </h1>
-          <p className="text-sm text-gray-600">
-            {user?.role === 'dev' 
-              ? 'Drag or click buttons to update' 
-              : 'Manage and assign tickets'}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={exportToExcel}
-            className="btn btn-secondary text-sm flex items-center gap-2"
-          >
-            📥 Export to Excel
-          </button>
-          <div className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
-            <p className="text-xs font-medium text-blue-900 capitalize">{user?.role} View</p>
+      <div className="page-header">
+        <div className="page-header-content flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span>📋</span>
+            <div>
+              <h1 className="page-header-title">{user?.role === 'dev' ? 'My Tickets' : 'Kanban Board'}</h1>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="page-header-subtitle">
+                  {user?.role === 'dev' ? 'Drag or click to update' : 'Manage tickets'}
+                </span>
+                <span className="px-2 py-0.5 bg-indigo-500/30 text-white text-xs font-semibold rounded uppercase">
+                  {user?.role}
+                </span>
+              </div>
+            </div>
           </div>
+          <button onClick={exportToExcel} className="btn btn-primary">
+            📥 Export
+          </button>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="card bg-gradient-to-r from-gray-50 to-blue-50 border-blue-200">
+      <div className="card">
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-lg">🔍</span>
-          <h3 className="font-semibold text-gray-900">Filters</h3>
+          <span>🔍</span>
+          <h3 className="text-sm font-semibold text-slate-800">Filters</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
@@ -308,18 +307,30 @@ export default function Board() {
               onChange={(e) => setFilter({ ...filter, assignee: e.target.value })}
               className="input"
             >
-              {user?.role === 'dev' ? (
+              {(user?.role === 'dev' || user?.role === 'pm') ? (
                 <>
                   <option value="me">👤 My Tickets</option>
-                  <option value="">👥 All Tickets (Branch)</option>
+                  <option value="">👥 All Tickets {user?.role === 'pm' ? '' : '(Branch)'}</option>
+                  {user?.role === 'pm' && (
+                    <>
+                      <option value="unassigned">⚠️ Unassigned</option>
+                      {assignableUsers.filter(u => u.id !== user.id).map(assignable => (
+                        <option key={assignable.id} value={assignable.id}>
+                          {assignable.name} {assignable.role === 'pm' ? '(PM)' : ''}
+                        </option>
+                      ))}
+                    </>
+                  )}
                 </>
               ) : (
                 <>
                   <option value="">All Assignees</option>
                   <option value="me">My Tickets</option>
                   <option value="unassigned">⚠️ Unassigned</option>
-                  {users.filter(u => u.role === 'dev').map(dev => (
-                    <option key={dev.id} value={dev.id}>{dev.name}</option>
+                  {assignableUsers.map(assignable => (
+                    <option key={assignable.id} value={assignable.id}>
+                      {assignable.name} {assignable.role === 'pm' ? '(PM)' : ''}
+                    </option>
                   ))}
                 </>
               )}
@@ -341,10 +352,10 @@ export default function Board() {
             </div>
           )}
         </div>
-        {user?.role === 'dev' && filter.assignee === 'me' && (
+        {(user?.role === 'dev' || user?.role === 'pm') && filter.assignee === 'me' && (
           <div className="mt-3 p-2 bg-blue-100 border border-blue-300 rounded-md">
             <p className="text-xs text-blue-800">
-              💡 <strong>Tip:</strong> Viewing only tickets assigned to you. Change filter to see all branch tickets.
+              💡 <strong>Tip:</strong> Viewing only tickets assigned to you. Change filter to see {user?.role === 'pm' ? 'all tickets' : 'all branch tickets'}.
             </p>
           </div>
         )}
@@ -421,8 +432,8 @@ export default function Board() {
                                       </button>
                                     )}
                                   </div>
-                                  {/* Quick Status Actions for Assigned Developer */}
-                                  {user?.role === 'dev' && item.assignee_id === user.id && item.status !== 'done' && (
+                                  {/* Quick Status Actions for Assigned Developer or PM */}
+                                  {(user?.role === 'dev' || user?.role === 'pm') && item.assignee_id === user.id && item.status !== 'done' && (
                                     <div className="flex gap-1">
                                       {item.status === 'backlog' && (
                                         <button

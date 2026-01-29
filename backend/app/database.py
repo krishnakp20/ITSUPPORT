@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:vicidialnow@localhost:3306/itsupport")
+DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:India%401234@192.168.10.30:3306/itsupport")
 
 # Use appropriate engine settings based on the database driver
 if "sqlite" in DATABASE_URL:

@@ -64,6 +64,7 @@ def read_items(
     type: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
     assignee_id: Optional[str] = Query(None),
+    reporter_id: Optional[str] = Query(None),
     branch_id: Optional[int] = Query(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
@@ -74,8 +75,8 @@ def read_items(
     # Note: When developers request their own assignments (assignee_id == "me"),
     # we avoid restricting by branch so they always see tickets assigned to them
     if current_user.role == "requester":
-        # Requesters can only see items from their branch
-        query = query.filter(WorkItem.branch_id == current_user.branch_id)
+        # Requesters can only see their own tickets (tickets they created)
+        query = query.filter(WorkItem.reporter_id == current_user.id)
     elif current_user.role == "dev":
         # Apply branch filter for devs only if they have a branch AND they are not explicitly fetching their own assignments
         if assignee_id != "me" and current_user.branch_id is not None:
@@ -101,6 +102,17 @@ def read_items(
                 query = query.filter(WorkItem.assignee_id == assignee_id_int)
             except ValueError:
                 # If not a valid integer, ignore the filter
+                pass
+    
+    # Filter by reporter (who created the ticket)
+    if reporter_id:
+        if reporter_id == "me":
+            query = query.filter(WorkItem.reporter_id == current_user.id)
+        else:
+            try:
+                reporter_id_int = int(reporter_id)
+                query = query.filter(WorkItem.reporter_id == reporter_id_int)
+            except ValueError:
                 pass
     
     items = query.offset(skip).limit(limit).all()
@@ -218,12 +230,12 @@ def assign_item(
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     
-    # Verify assignee exists and is a developer
+    # Verify assignee exists and is eligible (developer or PM)
     assignee = db.query(User).filter(User.id == assignment.assignee_id).first()
     if assignee is None:
         raise HTTPException(status_code=404, detail="Assignee not found")
-    if assignee.role != "dev":
-        raise HTTPException(status_code=400, detail="Can only assign to developers")
+    if assignee.role not in ("dev", "pm"):
+        raise HTTPException(status_code=400, detail="Can only assign to developers or PMs")
     
     # Update assignment
     old_assignee_id = item.assignee_id

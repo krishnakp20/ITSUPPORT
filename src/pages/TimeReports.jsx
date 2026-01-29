@@ -115,12 +115,21 @@ export default function TimeReports() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">⏱️ Time Reports</h1>
-        <button onClick={exportToCSV} className="btn btn-primary text-sm">
-          📊 Export to CSV
-        </button>
+    <div className="space-y-4 animate-fade-in">
+      {/* Header */}
+      <div className="page-header">
+        <div className="page-header-content flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span>⏱️</span>
+            <div>
+              <h1 className="page-header-title">Time Reports</h1>
+              <p className="page-header-subtitle">Track and export time entries</p>
+            </div>
+          </div>
+          <button onClick={exportToCSV} className="btn btn-primary">
+            📊 Export
+          </button>
+        </div>
       </div>
 
       {/* Date Range Filter */}
@@ -325,6 +334,8 @@ export default function TimeReports() {
     </div>
   )
 }
+
+
 
 
 

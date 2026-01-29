@@ -46,3 +46,5 @@ CREATE INDEX IF NOT EXISTS idx_time_entries_user_logged ON time_entries(user_id,
 
 
 
+
+

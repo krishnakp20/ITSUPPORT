@@ -10,7 +10,7 @@ def test_me_endpoint():
     print("🧪 Testing /items?assignee_id=me endpoint...")
     
     # First login
-    login_url = "http://localhost:8000/auth/login"
+    login_url = "http://localhost:8030/auth/login"
     login_data = {
         "username": "dev@example.com",
         "password": "password123"
@@ -28,7 +28,7 @@ def test_me_endpoint():
         
         # Test the me endpoint
         headers = {"Authorization": f"Bearer {token}"}
-        me_url = "http://localhost:8000/items?assignee_id=me"
+        me_url = "http://localhost:8030/items?assignee_id=me"
         
         response = requests.get(me_url, headers=headers)
         print(f"Status Code: {response.status_code}")

@@ -108,16 +108,16 @@ export default function NotificationBell() {
     <div className="relative">
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="relative p-2.5 text-gray-600 hover:text-gray-900 hover:bg-blue-50 rounded-lg transition-all hover:shadow-md border-2 border-transparent hover:border-blue-200"
+        className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all"
         title="Notifications"
       >
         {unreadCount > 0 ? (
-          <BellIconSolid className="h-7 w-7 text-blue-600 animate-pulse" />
+          <BellIconSolid className="h-5 w-5 text-indigo-600" />
         ) : (
-          <BellIcon className="h-7 w-7" />
+          <BellIcon className="h-5 w-5" />
         )}
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full shadow-lg animate-bounce">
+          <span className="absolute top-0 right-0 flex items-center justify-center min-w-[16px] h-4 px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}

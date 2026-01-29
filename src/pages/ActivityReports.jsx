@@ -139,23 +139,25 @@ export default function ActivityReports() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4 animate-fade-in">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">📊 Activity Reports</h1>
-          <p className="text-sm text-gray-600">
-            {user?.role === 'pm' ? 'Team activity and time tracking' : 'Your activity statistics'}
-          </p>
+      <div className="page-header">
+        <div className="page-header-content flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span>📊</span>
+            <div>
+              <h1 className="page-header-title">Activity Reports</h1>
+              <p className="page-header-subtitle">
+                {user?.role === 'pm' ? 'Team activity tracking' : 'Your activity stats'}
+              </p>
+            </div>
+          </div>
+          {reports.length > 0 && (
+            <button onClick={exportToExcel} className="btn btn-primary">
+              📥 Export
+            </button>
+          )}
         </div>
-        {reports.length > 0 && (
-          <button
-            onClick={exportToExcel}
-            className="btn btn-secondary text-sm flex items-center gap-2"
-          >
-            📥 Export to Excel
-          </button>
-        )}
       </div>
 
       {/* Summary Cards */}

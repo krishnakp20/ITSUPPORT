@@ -154,40 +154,45 @@ export default function Settings() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4">
+    <div className="max-w-4xl mx-auto space-y-4 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600">Manage your preferences and system configuration</p>
+      <div className="page-header">
+        <div className="page-header-content flex items-center gap-3">
+          <CogIcon className="h-5 w-5 text-white" />
+          <div>
+            <h1 className="page-header-title">Settings</h1>
+            <p className="page-header-subtitle">Manage preferences and configuration</p>
+          </div>
+        </div>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
+      <div className="card-flat p-1">
+        <nav className="flex gap-1">
           <button
             onClick={() => setActiveTab('notifications')}
-            className={`py-3 px-1 border-b-2 font-medium text-sm ${
+            className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-all ${
               activeTab === 'notifications'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md'
+                : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
-            <div className="flex items-center gap-2">
-              <BellIcon className="h-5 w-5" />
+            <div className="flex items-center justify-center gap-1.5">
+              <BellIcon className="h-4 w-4" />
               Notifications
             </div>
           </button>
           {user?.role === 'pm' && (
             <button
               onClick={() => setActiveTab('system')}
-              className={`py-3 px-1 border-b-2 font-medium text-sm ${
+              className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-all ${
                 activeTab === 'system'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md'
+                  : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              <div className="flex items-center gap-2">
-                <CogIcon className="h-5 w-5" />
+              <div className="flex items-center justify-center gap-1.5">
+                <CogIcon className="h-4 w-4" />
                 System
               </div>
             </button>

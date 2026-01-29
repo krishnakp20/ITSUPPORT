@@ -24,6 +24,7 @@ export default function Reports() {
   const [allTimeStats, setAllTimeStats] = useState(null)
   const [slaAlerts, setSlaAlerts] = useState([])
   const [myStats, setMyStats] = useState(null)
+  const [timeSummary, setTimeSummary] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -69,14 +70,16 @@ export default function Reports() {
         ))
       } else {
         // For PMs and requesters, show full reports
-        const [weeklyResponse, slaResponse, allItemsResponse] = await Promise.all([
+        const [weeklyResponse, slaResponse, allItemsResponse, timeSummaryResponse] = await Promise.all([
           api.get('/reports/weekly'),
           api.get('/reports/sla-alerts'),
-          api.get('/items')
+          api.get('/items'),
+          api.get('/time-tracking/summary')
         ])
         
         setWeeklyReport(weeklyResponse.data)
         setSlaAlerts(slaResponse.data)
+        setTimeSummary(timeSummaryResponse.data)
         
         // Calculate all-time stats from all items
         const allItems = allItemsResponse.data
@@ -100,6 +103,13 @@ export default function Reports() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const toNumber = (value) => {
+    if (value === null || value === undefined) return 0
+    if (typeof value === 'number') return value
+    const parsed = parseFloat(value)
+    return isNaN(parsed) ? 0 : parsed
   }
 
   const formatHours = (hours) => {
@@ -127,19 +137,22 @@ export default function Reports() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">
-            {user?.role === 'dev' ? '📈 My Performance' : '📊 Reports & Analytics'}
-          </h1>
-          <p className="text-sm text-gray-600">
-            {user?.role === 'dev' ? 'Personal stats and metrics' : 'Team metrics and SLA monitoring'}
-          </p>
-        </div>
-        <div className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
-          <p className="text-xs font-medium text-blue-900 capitalize">{user?.role} View</p>
+      <div className="page-header">
+        <div className="page-header-content flex items-center gap-2">
+          <span>{user?.role === 'dev' ? '📈' : '📊'}</span>
+          <div>
+            <h1 className="page-header-title">{user?.role === 'dev' ? 'My Performance' : 'Reports & Analytics'}</h1>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="page-header-subtitle">
+                {user?.role === 'dev' ? 'Personal stats' : 'Team metrics & SLA'}
+              </span>
+              <span className="px-2 py-0.5 bg-indigo-500/30 text-white text-xs font-semibold rounded uppercase">
+                {user?.role}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -278,6 +291,56 @@ export default function Reports() {
               <p className="text-2xl font-bold text-yellow-900">{formatHours(weeklyReport.support_mttr_hours || 0)}</p>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* PM Time Tracking Summary */}
+      {user?.role === 'pm' && timeSummary && (
+        <div className="card bg-gradient-to-r from-slate-50 to-slate-100 border-slate-200">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-2xl">⏱️</span>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Developer Time Summary</h3>
+              <p className="text-sm text-gray-600">Logged hours overview across the team</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="bg-white rounded-lg p-4 border border-slate-200">
+              <p className="text-sm text-gray-600">Total Hours</p>
+              <p className="text-2xl font-bold text-slate-900">{toNumber(timeSummary.total_hours).toFixed(1)}</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 border border-emerald-200">
+              <p className="text-sm text-emerald-700">Billable</p>
+              <p className="text-2xl font-bold text-emerald-900">{toNumber(timeSummary.billable_hours).toFixed(1)}</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 border border-amber-200">
+              <p className="text-sm text-amber-700">Non-billable</p>
+              <p className="text-2xl font-bold text-amber-900">{toNumber(timeSummary.non_billable_hours).toFixed(1)}</p>
+            </div>
+          </div>
+
+          {Object.keys(timeSummary.by_user || {}).length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className="bg-slate-100">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Developer</th>
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Hours</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-slate-200">
+                  {Object.entries(timeSummary.by_user).map(([name, hours]) => (
+                    <tr key={name}>
+                      <td className="px-4 py-2 text-sm text-slate-700">{name}</td>
+                      <td className="px-4 py-2 text-sm text-slate-900 text-right font-medium">{toNumber(hours).toFixed(1)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-600">No time entries logged yet.</p>
+          )}
         </div>
       )}
 

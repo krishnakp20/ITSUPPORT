@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { api } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
@@ -12,6 +12,7 @@ export default function CreateItem() {
   const [loading, setLoading] = useState(false)
   const [selectedFiles, setSelectedFiles] = useState([])
   const navigate = useNavigate()
+  const assignableUsers = users.filter(u => u.role === 'dev' || u.role === 'pm')
   
   const {
     register,
@@ -110,10 +111,21 @@ export default function CreateItem() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="mb-4">
-        <h1 className="text-xl font-bold text-gray-900">🎫 Create New Ticket</h1>
-        <p className="text-sm text-gray-600">Submit a support ticket or feature request</p>
+    <div className="max-w-3xl mx-auto space-y-4 animate-fade-in">
+      {/* Header */}
+      <div className="page-header">
+        <div className="page-header-content flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-xl">🎫</span>
+            <div>
+              <h1 className="page-header-title">Create New Ticket</h1>
+              <p className="page-header-subtitle">Submit a support ticket or request</p>
+            </div>
+          </div>
+          <Link to="/board" className="btn btn-primary text-sm">
+            ← Back to Board
+          </Link>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
@@ -245,10 +257,10 @@ export default function CreateItem() {
                 disabled={user?.role === 'requester'}
               >
                 <option value="">⏳ Unassigned - PM will assign</option>
-                {users.filter(u => u.role === 'dev').map((dev) => (
-                  <option key={dev.id} value={dev.id}>
-                    {dev.name}
-                    {dev.branch ? ` (${dev.branch.name} Branch)` : ''}
+                {assignableUsers.map(assignable => (
+                  <option key={assignable.id} value={assignable.id}>
+                    {assignable.name} {assignable.role === 'pm' ? '(PM)' : ''}
+                    {assignable.branch ? ` (${assignable.branch.name} Branch)` : ''}
                   </option>
                 ))}
               </select>

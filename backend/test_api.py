@@ -10,7 +10,7 @@ def test_login():
     """Test login endpoint"""
     print("🔐 Testing login...")
     
-    url = "http://localhost:8000/auth/login"
+    url = "http://localhost:8030/auth/login"
     data = {
         "username": "pm@example.com",
         "password": "password123"
@@ -37,7 +37,7 @@ def test_users_endpoint(token):
     """Test users endpoint with authentication"""
     print("\n👥 Testing users endpoint...")
     
-    url = "http://localhost:8000/users/"
+    url = "http://localhost:8030/users/"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
@@ -62,7 +62,7 @@ def test_items_endpoint(token):
     """Test items endpoint"""
     print("\n📋 Testing items endpoint...")
     
-    url = "http://localhost:8000/items/"
+    url = "http://localhost:8030/items/"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"

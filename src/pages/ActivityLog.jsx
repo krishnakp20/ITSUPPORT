@@ -137,19 +137,21 @@ export default function ActivityLog() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">⏱️ Daily Activity Log</h1>
-          <p className="text-sm text-gray-600">Track your work and time</p>
+      <div className="page-header">
+        <div className="page-header-content flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span>⏱️</span>
+            <div>
+              <h1 className="page-header-title">Daily Activity Log</h1>
+              <p className="page-header-subtitle">Track your work and time</p>
+            </div>
+          </div>
+          <button onClick={() => navigate('/activity-reports')} className="btn btn-primary">
+            View Reports
+          </button>
         </div>
-        <button
-          onClick={() => navigate('/activity-reports')}
-          className="btn btn-secondary text-sm"
-        >
-          View All Reports
-        </button>
       </div>
 
       {/* Form */}

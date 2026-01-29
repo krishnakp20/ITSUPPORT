@@ -14,3 +14,5 @@ CREATE INDEX idx_time_entries_user_logged ON time_entries(user_id, logged_at);
 
 
 
+
+

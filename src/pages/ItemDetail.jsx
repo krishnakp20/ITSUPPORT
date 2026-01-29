@@ -36,6 +36,7 @@ export default function ItemDetail() {
     end_date: ''
   })
   const [timeLoggedTrigger, setTimeLoggedTrigger] = useState(0)
+  const assignableUsers = users.filter(u => u.role === 'dev' || u.role === 'pm')
 
   useEffect(() => {
     fetchItemDetails()
@@ -298,20 +299,34 @@ export default function ItemDetail() {
     )
   }
 
-  const canChangeStatus = user?.role === 'dev' && item.assignee_id === user.id
+  const canChangeStatus = (user?.role === 'dev' || user?.role === 'pm') && item.assignee_id === user.id
 
   return (
-    <div className="max-w-5xl mx-auto space-y-3">
+    <div className="max-w-5xl mx-auto space-y-4 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => navigate('/board')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-        >
-          <ArrowLeftIcon className="h-5 w-5" />
-          Back to Board
-        </button>
-        <span className="text-sm text-gray-500">ID: #{item.id}</span>
+      <div className="page-header">
+        <div className="page-header-content flex items-center justify-between">
+          <button
+            onClick={() => navigate('/board')}
+            className="flex items-center gap-1.5 text-purple-200 hover:text-white transition-colors text-sm"
+          >
+            <ArrowLeftIcon className="h-4 w-4" />
+            Back
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-1 bg-white/10 text-white text-sm font-bold rounded-lg">
+              #{item.id}
+            </span>
+            <span className={`px-2.5 py-1 text-xs font-semibold rounded-lg uppercase ${
+              item.status === 'done' ? 'bg-emerald-500 text-white' :
+              item.status === 'in_progress' ? 'bg-blue-500 text-white' :
+              item.status === 'review' ? 'bg-amber-500 text-white' :
+              'bg-slate-500 text-white'
+            }`}>
+              {item.status.replace('_', ' ')}
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -340,13 +355,18 @@ export default function ItemDetail() {
             </p>
           </div>
 
-          {/* Status Management for Developers */}
-          {user?.role === 'dev' && (
+          {/* Status Management for Developers and PMs when assigned */}
+          {(user?.role === 'dev' || user?.role === 'pm') && (
             item.assignee_id === user.id ? (
               <div className="card bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-lg">🎯</span>
                   <h3 className="text-sm font-bold text-blue-900">Quick Status Update</h3>
+                  {user?.role === 'pm' && (
+                    <span className="text-xs px-2 py-0.5 bg-purple-200 text-purple-800 rounded-full font-medium">
+                      PM Mode
+                    </span>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -779,11 +799,12 @@ export default function ItemDetail() {
                   className="input"
                   autoFocus
                 >
-                  <option value="">Select developer...</option>
-                  {users.filter(u => u.role === 'dev').map(dev => (
-                    <option key={dev.id} value={dev.id}>
-                      {dev.name} {dev.branch ? `(${dev.branch.name})` : ''}
-                      {dev.id === item.assignee_id && ' - Current'}
+                  <option value="">Select assignee...</option>
+                  {assignableUsers.map(assignable => (
+                    <option key={assignable.id} value={assignable.id}>
+                      {assignable.name} {assignable.role === 'pm' ? '(PM)' : ''}
+                      {assignable.branch ? ` (${assignable.branch.name})` : ''}
+                      {assignable.id === item.assignee_id && ' - Current'}
                     </option>
                   ))}
                 </select>

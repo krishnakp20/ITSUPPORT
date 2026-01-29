@@ -39,11 +39,12 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     try {
       console.log('Attempting login for:', email)
-      const formData = new FormData()
-      formData.append('username', email)
-      formData.append('password', password)
+      // Use URLSearchParams for application/x-www-form-urlencoded format
+      const params = new URLSearchParams()
+      params.append('username', email)
+      params.append('password', password)
       
-      const response = await api.post('/auth/login', formData, {
+      const response = await api.post('/auth/login', params.toString(), {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
