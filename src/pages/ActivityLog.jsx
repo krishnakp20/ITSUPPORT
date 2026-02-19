@@ -51,7 +51,7 @@ export default function ActivityLog() {
 
   const fetchItems = async () => {
     try {
-      const response = await api.get('/items?assignee_id=me')
+      const response = await api.get('/items?assignee_id=me&limit=10000')
       setItems(response.data)
     } catch (error) {
       console.error('Failed to fetch items:', error)

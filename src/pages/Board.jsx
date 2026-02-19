@@ -41,6 +41,7 @@ export default function Board() {
     try {
       setLoading(true)
       const params = new URLSearchParams()
+      params.append('limit', '10000')
       if (filter.type) params.append('type', filter.type)
       if (filter.assignee) params.append('assignee_id', filter.assignee)
       if (filter.branch) params.append('branch_id', filter.branch)

@@ -36,11 +36,11 @@ export default function Dashboard() {
     try {
       let itemsResponse
       if (user?.role === 'pm') {
-        itemsResponse = await api.get('/items')
+        itemsResponse = await api.get('/items?limit=10000')
       } else if (user?.role === 'dev') {
-        itemsResponse = await api.get('/items?assignee_id=me')
+        itemsResponse = await api.get('/items?assignee_id=me&limit=10000')
       } else {
-        itemsResponse = await api.get('/items')
+        itemsResponse = await api.get('/items?limit=10000')
       }
       
       const items = itemsResponse.data

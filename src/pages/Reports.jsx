@@ -38,7 +38,7 @@ export default function Reports() {
       // For developers, fetch their personal stats
       if (user?.role === 'dev') {
         const [myItemsResponse, slaResponse] = await Promise.all([
-          api.get('/items?assignee_id=me'),
+          api.get('/items?assignee_id=me&limit=10000'),
           api.get('/reports/sla-alerts')
         ])
         
@@ -73,7 +73,7 @@ export default function Reports() {
         const [weeklyResponse, slaResponse, allItemsResponse, timeSummaryResponse] = await Promise.all([
           api.get('/reports/weekly'),
           api.get('/reports/sla-alerts'),
-          api.get('/items'),
+          api.get('/items?limit=10000'),
           api.get('/time-tracking/summary')
         ])
         
