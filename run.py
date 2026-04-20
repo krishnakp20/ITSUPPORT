@@ -40,7 +40,7 @@ def start_backend():
     
     # Start uvicorn server
     backend_process = subprocess.Popen([
-        "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"
+        "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8030", "--reload"
     ])
     
     # Change back to root directory
@@ -75,8 +75,8 @@ def main():
     
     print("\n🎉 Services started!")
     print("📱 Frontend: http://localhost:3000")
-    print("🔧 Backend API: http://localhost:8000")
-    print("📚 API Docs: http://localhost:8000/docs")
+    print("🔧 Backend API: http://localhost:8030")
+    print("📚 API Docs: http://localhost:8030/docs")
     print("\n💡 Default login credentials:")
     print("   PM User: pm@example.com / password123")
     print("   Dev User: dev@example.com / password123")

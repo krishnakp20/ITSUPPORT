@@ -1,3 +1,11 @@
 node_modules
-backend/venv
+backend/.venv
 .env
+vite.config.js
+Quick_start_guide.md
+run.py
+start.py
+setup.py
+start_backend.py
+start_frontend.py
+venv

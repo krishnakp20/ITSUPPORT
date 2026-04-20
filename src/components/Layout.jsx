@@ -43,7 +43,7 @@ export default function Layout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Mobile sidebar overlay */}
       <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? '' : 'hidden'}`}>
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
@@ -248,7 +248,7 @@ export default function Layout({ children }) {
         {/* Page Content */}
         <main className="min-h-[calc(100vh-3rem)]">
           <div className="p-3 sm:p-4">
-            <div className="max-w-7xl mx-auto">
+            <div className="w-full max-w-none">
               {children}
             </div>
           </div>

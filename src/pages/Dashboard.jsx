@@ -12,14 +12,20 @@ import {
   UserIcon,
   SparklesIcon,
   ArrowTrendingUpIcon,
-  ArrowRightIcon
+  ArrowRightIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 
 export default function Dashboard() {
   const { user } = useAuth()
+  const [branches, setBranches] = useState([])
+  const [users, setUsers] = useState([])
+  const [selectedBranch, setSelectedBranch] = useState('')
+  const [allItems, setAllItems] = useState([])
   const [stats, setStats] = useState({
     totalItems: 0,
     myItems: 0,
+    pendingItems: 0,
     overdueItems: 0,
     totalDone: 0,
     last3DaysItems: 0,
@@ -27,29 +33,64 @@ export default function Dashboard() {
   })
   const [recentItems, setRecentItems] = useState([])
   const [loading, setLoading] = useState(true)
+  const [detailModal, setDetailModal] = useState({
+    open: false,
+    title: '',
+    items: []
+  })
 
   useEffect(() => {
     fetchDashboardData()
-  }, [])
+  }, [user?.role, selectedBranch])
+
+  useEffect(() => {
+    fetchBranches()
+    fetchUsers()
+  }, [user?.role])
+
+  const fetchBranches = async () => {
+    try {
+      const response = await api.get('/branches')
+      setBranches(response.data)
+    } catch (error) {
+      console.error('Failed to fetch branches:', error)
+    }
+  }
+
+  const fetchUsers = async () => {
+    try {
+      const response = await api.get('/users')
+      setUsers(response.data)
+    } catch (error) {
+      console.error('Failed to fetch users:', error)
+    }
+  }
 
   const fetchDashboardData = async () => {
     try {
-      let itemsResponse
-      if (user?.role === 'pm') {
-        itemsResponse = await api.get('/items?limit=10000')
-      } else if (user?.role === 'dev') {
-        itemsResponse = await api.get('/items?assignee_id=me&limit=10000')
-      } else {
-        itemsResponse = await api.get('/items?limit=10000')
+      const params = new URLSearchParams()
+      params.append('limit', '10000')
+
+      if (user?.role === 'dev') {
+        params.append('assignee_id', 'me')
       }
+
+      // PM can filter dashboard by branch. Empty selection means all tickets.
+      if (user?.role === 'pm' && selectedBranch) {
+        params.append('branch_id', selectedBranch)
+      }
+
+      const itemsResponse = await api.get(`/items?${params.toString()}`)
       
       const items = itemsResponse.data
+      setAllItems(items)
       const now = new Date()
       const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000))
       
       const myItems = user?.role === 'requester' 
         ? items.filter(item => item.status === 'in_progress' || item.status === 'review')
         : items.filter(item => item.assignee_id === user?.id)
+      const pendingItems = items.filter(item => item.status !== 'done')
       const overdueItems = items.filter(item => {
         const deadline = item.end_date || item.due_at
         return deadline && new Date(deadline) < now && item.status !== 'done'
@@ -65,6 +106,7 @@ export default function Dashboard() {
       setStats({
         totalItems: items.length,
         myItems: myItems.length,
+        pendingItems: pendingItems.length,
         overdueItems: overdueItems.length,
         totalDone: totalDone.length,
         last3DaysItems: last3DaysItems.length,
@@ -107,6 +149,72 @@ export default function Dashboard() {
     return styles[priority] || styles.normal
   }
 
+  const formatDate = (dateValue) => {
+    if (!dateValue) return '-'
+    const date = new Date(dateValue)
+    if (Number.isNaN(date.getTime())) return '-'
+    const day = String(date.getDate()).padStart(2, '0')
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const year = String(date.getFullYear()).slice(-2)
+    return `${day}.${month}.${year}`
+  }
+
+  const getStatusLabel = (status) => {
+    const labels = {
+      backlog: 'Backlog',
+      in_progress: 'In Progress',
+      review: 'Review',
+      done: 'Closed'
+    }
+    return labels[status] || status
+  }
+
+  const getBranchName = (branchId) => {
+    if (!branchId) return '-'
+    const branch = branches.find((b) => b.id === branchId)
+    return branch?.name || `Branch ${branchId}`
+  }
+
+  const getAssigneeName = (assigneeId) => {
+    if (!assigneeId) return '-'
+    const assignee = users.find((u) => u.id === assigneeId)
+    return assignee?.name || `User ${assigneeId}`
+  }
+
+  const openDetailModal = (cardKey, cardLabel) => {
+    const now = new Date()
+    const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000))
+
+    let filteredItems = allItems
+
+    if (cardKey === 'myItems') {
+      filteredItems = user?.role === 'requester'
+        ? allItems.filter((item) => item.status === 'in_progress' || item.status === 'review')
+        : allItems.filter((item) => item.assignee_id === user?.id)
+    } else if (cardKey === 'overdueItems') {
+      filteredItems = allItems.filter((item) => {
+        const deadline = item.end_date || item.due_at
+        return deadline && new Date(deadline) < now && item.status !== 'done'
+      })
+    } else if (cardKey === 'pendingItems') {
+      filteredItems = allItems.filter((item) => item.status !== 'done')
+    } else if (cardKey === 'totalDone') {
+      filteredItems = allItems.filter((item) => item.status === 'done')
+    } else if (cardKey === 'last3DaysItems') {
+      filteredItems = allItems.filter((item) => new Date(item.created_at) >= threeDaysAgo)
+    } else if (cardKey === 'doneLast3Days') {
+      filteredItems = allItems.filter(
+        (item) => item.status === 'done' && item.completed_at && new Date(item.completed_at) >= threeDaysAgo
+      )
+    }
+
+    setDetailModal({
+      open: true,
+      title: cardLabel,
+      items: filteredItems
+    })
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -120,6 +228,7 @@ export default function Dashboard() {
 
   const mainStats = [
     {
+      key: 'totalItems',
       label: user?.role === 'pm' ? 'All Tickets' : user?.role === 'requester' ? 'My Tickets' : 'Total Items',
       value: stats.totalItems,
       icon: TicketIcon,
@@ -127,6 +236,7 @@ export default function Dashboard() {
       shadow: 'shadow-blue-500/25'
     },
     {
+      key: 'myItems',
       label: user?.role === 'pm' ? 'Assigned to Me' : user?.role === 'requester' ? 'In Progress' : 'My Items',
       value: stats.myItems,
       icon: UserIcon,
@@ -134,6 +244,7 @@ export default function Dashboard() {
       shadow: 'shadow-violet-500/25'
     },
     {
+      key: 'overdueItems',
       label: 'Overdue',
       value: stats.overdueItems,
       icon: ExclamationTriangleIcon,
@@ -141,6 +252,15 @@ export default function Dashboard() {
       shadow: 'shadow-rose-500/25'
     },
     {
+      key: 'pendingItems',
+      label: 'Pending Tickets',
+      value: stats.pendingItems,
+      icon: ClockIcon,
+      gradient: 'bg-gradient-to-br from-amber-500 to-orange-600',
+      shadow: 'shadow-amber-500/25'
+    },
+    {
+      key: 'totalDone',
       label: 'Completed',
       value: stats.totalDone,
       icon: CheckCircleIcon,
@@ -151,6 +271,7 @@ export default function Dashboard() {
 
   const secondaryStats = [
     {
+      key: 'last3DaysItems',
       label: 'Last 3 Days',
       value: stats.last3DaysItems,
       icon: CalendarDaysIcon,
@@ -160,6 +281,7 @@ export default function Dashboard() {
       border: 'border-amber-200'
     },
     {
+      key: 'doneLast3Days',
       label: 'Done (3 Days)',
       value: stats.doneLast3Days,
       icon: ArrowTrendingUpIcon,
@@ -192,17 +314,38 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-          <Link to="/create" className="btn btn-primary">
-            <PlusIcon className="h-4 w-4" />
-            New Ticket
-          </Link>
+          <div className="flex items-center gap-2">
+            {user?.role === 'pm' && (
+              <select
+                value={selectedBranch}
+                onChange={(e) => setSelectedBranch(e.target.value)}
+                className="h-9 min-w-[180px] rounded-lg border border-white/20 bg-white/10 px-3 text-xs text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              >
+                <option value="" className="text-slate-900">All Branches</option>
+                {branches.map((branch) => (
+                  <option key={branch.id} value={branch.id} className="text-slate-900">
+                    {branch.name}
+                  </option>
+                ))}
+              </select>
+            )}
+            <Link to="/create" className="btn btn-primary">
+              <PlusIcon className="h-4 w-4" />
+              New Ticket
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Main Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {mainStats.map((stat, index) => (
-          <div key={index} className={`stat-card ${stat.gradient} shadow-md ${stat.shadow}`}>
+          <button
+            key={index}
+            type="button"
+            onClick={() => openDetailModal(stat.key, stat.label)}
+            className={`stat-card ${stat.gradient} shadow-md ${stat.shadow} text-left`}
+          >
             <div className="stat-card-content flex items-center justify-between">
               <div>
                 <p className="stat-card-label">{stat.label}</p>
@@ -212,14 +355,19 @@ export default function Dashboard() {
                 <stat.icon className="h-5 w-5 text-white" />
               </div>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
       {/* Secondary Stats */}
       <div className="grid grid-cols-2 gap-3">
         {secondaryStats.map((stat, index) => (
-          <div key={index} className={`card-flat flex items-center gap-3 border ${stat.border} ${stat.bg}`}>
+          <button
+            key={index}
+            type="button"
+            onClick={() => openDetailModal(stat.key, stat.label)}
+            className={`card-flat flex items-center gap-3 border ${stat.border} ${stat.bg} text-left`}
+          >
             <div className={`p-2 rounded-lg ${stat.bg} border ${stat.border}`}>
               <stat.icon className={`h-5 w-5 ${stat.color}`} />
             </div>
@@ -230,7 +378,7 @@ export default function Dashboard() {
                 <span className="text-xs text-slate-500">{stat.description}</span>
               </div>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
@@ -297,6 +445,69 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* Ticket Details Modal */}
+      {detailModal.open && (
+        <div className="modal-overlay" onClick={() => setDetailModal((prev) => ({ ...prev, open: false }))}>
+          <div
+            className="modal-content max-w-6xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h3 className="modal-header mb-0">{detailModal.title} Tickets</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Total: {detailModal.items.length}</p>
+              </div>
+              <button
+                type="button"
+                className="p-1.5 rounded-md hover:bg-slate-100 text-slate-500"
+                onClick={() => setDetailModal((prev) => ({ ...prev, open: false }))}
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            </div>
+
+            {detailModal.items.length === 0 ? (
+              <div className="empty-state py-6">
+                <p className="empty-state-title">No tickets found</p>
+              </div>
+            ) : (
+              <div className="table-container">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>S.No</th>
+                      <th>Client</th>
+                      <th>Topic</th>
+                      <th>Ticket Number</th>
+                      <th>Ticket Assigned To</th>
+                      <th>Target Date</th>
+                      <th>Status</th>
+                      <th>Remarks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {detailModal.items.map((item, index) => (
+                      <tr key={item.id}>
+                        <td>{index + 1}</td>
+                        <td>{getBranchName(item.branch_id)}</td>
+                        <td className="max-w-[280px] truncate" title={item.title}>{item.title}</td>
+                        <td>#{item.id}</td>
+                        <td>{getAssigneeName(item.assignee_id)}</td>
+                        <td>{formatDate(item.end_date || item.due_at)}</td>
+                        <td>{getStatusLabel(item.status)}</td>
+                        <td className="max-w-[320px] truncate" title={item.description || ''}>
+                          {item.description || '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

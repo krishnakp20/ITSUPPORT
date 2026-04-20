@@ -4,15 +4,65 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24545ef9-a018-4521-91ae-cd538ae4987a" name="Changes" comment="" />
+    <list default="true" id="24545ef9-a018-4521-91ae-cd538ae4987a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ATTACHMENT_SYSTEM_GUIDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/ATTACHMENT_SYSTEM_GUIDE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/COMPLETE_FEATURE_SUMMARY.md" beforeDir="false" afterPath="$PROJECT_DIR$/COMPLETE_FEATURE_SUMMARY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/NOTIFICATION_SYSTEM_GUIDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/NOTIFICATION_SYSTEM_GUIDE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/QUICK_START_GUIDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/QUICK_START_GUIDE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TIME_TRACKING_GUIDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/TIME_TRACKING_GUIDE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TROUBLESHOOTING_FIX.md" beforeDir="false" afterPath="$PROJECT_DIR$/TROUBLESHOOTING_FIX.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/add_ticket_dates.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/add_ticket_dates.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/models/attachment.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/attachment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/models/time_entry.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/models/time_entry.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/routers/attachments.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/routers/attachments.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/routers/items.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/routers/items.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/routers/notifications.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/routers/notifications.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/routers/time_tracking.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/routers/time_tracking.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/schemas/attachment.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/attachment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/schemas/time_entry.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/schemas/time_entry.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/create_attachments_table.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/create_attachments_table.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/create_notifications_tables.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/create_notifications_tables.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/create_time_tracking.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/create_time_tracking.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/fix_time_tracking_migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/fix_time_tracking_migration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/run_attachments_migration.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/run_attachments_migration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/run_date_migration.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/run_date_migration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/run_fix_migration.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/run_fix_migration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/run_notification_migration.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/run_notification_migration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/run_notification_migration_simple.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/run_notification_migration_simple.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/run_time_tracking_migration.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/run_time_tracking_migration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/test_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/test_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/test_me_endpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/test_me_endpoint.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/env.example" beforeDir="false" afterPath="$PROJECT_DIR$/env.example" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/TimeEntriesList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TimeEntriesList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/TimeTracker.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/TimeTracker.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contexts/AuthContext.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/contexts/AuthContext.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/Board.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Board.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/CreateItem.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/CreateItem.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Dashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/ItemDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/ItemDetail.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/Reports.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Reports.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/TimeReports.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/TimeReports.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/api.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/start.py" beforeDir="false" afterPath="$PROJECT_DIR$/start.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/start_backend.py" beforeDir="false" afterPath="$PROJECT_DIR$/start_backend.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/start_frontend.py" beforeDir="false" afterPath="$PROJECT_DIR$/start_frontend.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vite.config.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3
-}]]></component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="356PQ9OAN0Nzpav1hWCjVmJCkKd" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -21,6 +71,8 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
     "last_opened_file_path": "D:/Project/ITSUPPORT"
   }
 }]]></component>

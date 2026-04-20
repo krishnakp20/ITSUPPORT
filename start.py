@@ -105,8 +105,8 @@ def start_services():
     
     print("\n🎉 Services started!")
     print("📱 Frontend: http://localhost:3000")
-    print("🔧 Backend API: http://localhost:8000")
-    print("📚 API Docs: http://localhost:8000/docs")
+    print("🔧 Backend API: http://localhost:8030")
+    print("📚 API Docs: http://localhost:8030/docs")
     print("\n💡 Default login credentials:")
     print("   PM User: pm@example.com / password123")
     print("   Dev User: dev@example.com / password123")

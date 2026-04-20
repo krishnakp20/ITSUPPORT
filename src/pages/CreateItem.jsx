@@ -111,7 +111,7 @@ export default function CreateItem() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-4 animate-fade-in">
+    <div className="w-full max-w-none space-y-4 animate-fade-in">
       {/* Header */}
       <div className="page-header">
         <div className="page-header-content flex items-center justify-between">

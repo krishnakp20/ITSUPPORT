@@ -41,8 +41,8 @@ def main():
     os.chdir("backend")
     
     print("\n🚀 Starting backend server with uvicorn...")
-    print("📚 API Docs will be available at: http://localhost:8000/docs")
-    print("🔧 Backend API: http://localhost:8000")
+    print("📚 API Docs will be available at: http://localhost:8030/docs")
+    print("🔧 Backend API: http://localhost:8030")
     print("\n⏹️  Press Ctrl+C to stop the server")
     
     try:
@@ -50,7 +50,7 @@ def main():
         subprocess.run([
             "uvicorn", "main:app", 
             "--host", "0.0.0.0", 
-            "--port", "8000", 
+            "--port", "8030", 
             "--reload"
         ])
     except KeyboardInterrupt:

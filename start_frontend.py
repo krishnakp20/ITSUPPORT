@@ -20,7 +20,7 @@ def main():
     
     print("🚀 Starting frontend development server...")
     print("📱 Frontend will be available at: http://localhost:3000")
-    print("🔧 Make sure the backend is running on: http://localhost:8000")
+    print("🔧 Make sure the backend is running on: http://localhost:8030")
     print("\n⏹️  Press Ctrl+C to stop the server")
     
     try:

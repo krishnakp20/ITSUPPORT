@@ -121,6 +121,25 @@ export default function ItemDetail() {
     }
   }
 
+  const handleDownloadAttachment = async (attachment) => {
+    try {
+      const response = await api.get(`/attachments/download/${attachment.id}`, {
+        responseType: 'blob'
+      })
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: attachment.mime_type }))
+      const link = document.createElement('a')
+      link.href = url
+      link.download = attachment.original_filename
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Failed to download attachment:', error)
+      toast.error(error.response?.data?.detail || 'Failed to download attachment')
+    }
+  }
+
   const getUserName = (userId) => {
     const foundUser = users.find(u => u.id === userId)
     return foundUser ? foundUser.name : `User #${userId}`
@@ -302,7 +321,7 @@ export default function ItemDetail() {
   const canChangeStatus = (user?.role === 'dev' || user?.role === 'pm') && item.assignee_id === user.id
 
   return (
-    <div className="max-w-5xl mx-auto space-y-4 animate-fade-in">
+    <div className="w-full max-w-none space-y-4 animate-fade-in">
       {/* Header */}
       <div className="page-header">
         <div className="page-header-content flex items-center justify-between">
@@ -517,13 +536,22 @@ export default function ItemDetail() {
                         </p>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleDeleteAttachment(att.id)}
-                      className="p-1 text-red-600 hover:bg-red-50 rounded"
-                      title="Delete"
-                    >
-                      <span className="text-sm">🗑️</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleDownloadAttachment(att)}
+                        className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                        title="Download"
+                      >
+                        <span className="text-sm">⬇️</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteAttachment(att.id)}
+                        className="p-1 text-red-600 hover:bg-red-50 rounded"
+                        title="Delete"
+                      >
+                        <span className="text-sm">🗑️</span>
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
