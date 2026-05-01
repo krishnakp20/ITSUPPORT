@@ -13,6 +13,28 @@ const activeColumns = [
 
 const doneColumn = { id: 'done', title: 'Done', color: 'bg-green-100' }
 
+const getDefaultFilter = (role) => ({
+  type: '',
+  assignee: (role === 'dev' || role === 'pm') ? 'me' : '',
+  priority: '',
+  branch: ''
+})
+
+const getInitialFilter = (role) => {
+  const fallback = getDefaultFilter(role)
+  try {
+    const saved = localStorage.getItem('boardFilter')
+    if (!saved) return fallback
+    const parsed = JSON.parse(saved)
+    return {
+      ...fallback,
+      ...(parsed || {})
+    }
+  } catch {
+    return fallback
+  }
+}
+
 export default function Board() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -20,13 +42,43 @@ export default function Board() {
   const [users, setUsers] = useState([])
   const [branches, setBranches] = useState([])
   const [loading, setLoading] = useState(true)
-  const [showDone, setShowDone] = useState(false)
-  const [filter, setFilter] = useState({
-    type: '',
-    assignee: (user?.role === 'dev' || user?.role === 'pm') ? 'me' : '', // Default to "my tickets" for developers and PMs
-    priority: '',
-    branch: ''
+  const [showDone, setShowDone] = useState(() => {
+    try {
+      return localStorage.getItem('boardShowDone') === 'true'
+    } catch {
+      return false
+    }
   })
+  const [filter, setFilter] = useState(() => getInitialFilter(user?.role))
+
+  // Persist board filters so user does not need to reselect after navigation/refresh
+  useEffect(() => {
+    try {
+      localStorage.setItem('boardFilter', JSON.stringify(filter))
+    } catch {
+      // Ignore storage errors
+    }
+  }, [filter])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('boardShowDone', String(showDone))
+    } catch {
+      // Ignore storage errors
+    }
+  }, [showDone])
+
+  // If role changes and saved filter has no assignee, reapply sensible default
+  useEffect(() => {
+    if (!user?.role) return
+    setFilter((prev) => {
+      if (prev.assignee) return prev
+      return {
+        ...prev,
+        assignee: (user.role === 'dev' || user.role === 'pm') ? 'me' : ''
+      }
+    })
+  }, [user?.role])
   const assignableUsers = users.filter(u => u.role === 'dev' || u.role === 'pm')
 
   useEffect(() => {

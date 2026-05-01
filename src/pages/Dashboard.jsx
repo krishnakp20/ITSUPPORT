@@ -82,7 +82,9 @@ export default function Dashboard() {
 
       const itemsResponse = await api.get(`/items?${params.toString()}`)
       
-      const items = itemsResponse.data
+      const items = [...itemsResponse.data].sort(
+        (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)
+      )
       setAllItems(items)
       const now = new Date()
       const threeDaysAgo = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000))
